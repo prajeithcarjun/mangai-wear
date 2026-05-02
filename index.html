@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PR Art & Crafts – Clay Charms</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyCU_l4YcqsAwOA3kZjttl7eZxj4O4wjwQU",
+    authDomain: "pr-art-n-crafts.firebaseapp.com",
+    projectId: "pr-art-n-crafts",
+    storageBucket: "pr-art-n-crafts.firebasestorage.app",
+    messagingSenderId: "143021224334",
+    appId: "1:143021224334:web:1822ae08e5636851afb4df"
+  };
+
+  window.firebaseApp = initializeApp(firebaseConfig);
+  window.db = getFirestore(window.firebaseApp);
+</script>
+
+<style>
+*{box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+    margin:0;
+    display:flex;
+    min-height:100vh;
+    background:#fafbff;
+    position:relative;
+    overflow:auto;
+}
+.bgPattern{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(170,150,255,.25) 0 20px, transparent 21px),
+        radial-gradient(circle at 70% 30%, rgba(170,150,255,.25) 0 18px, transparent 19px),
+        radial-gradient(circle at 40% 70%, rgba(170,150,255,.25) 0 22px, transparent 23px),
+        radial-gradient(circle at 80% 80%, rgba(170,150,255,.25) 0 16px, transparent 17px);
+    filter:blur(12px);
+    z-index:0;
+}
+.sidebar, .main{position:relative;z-index:1}
+.sidebar{
+    width:260px;
+    background:rgba(255,255,255,.92);
+    border-right:1px solid #e6e9ff;
+    padding:14px;
+}
+.brand{text-align:center;}
+.brand h2{
+    margin:0;
+    font-family:'Pacifico',cursive;
+    font-size:28px;
+    color:#6a6cff;
+}
+.brand p{
+    margin:4px 0 10px;
+    font-size:12px;
+    color:#777;
+}
+.userName{
+    text-align:center;
+    font-size:13px;
+    margin-bottom:12px;
+    color:#555;
+}
+.search{
+    width:100%;
+    padding:9px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    margin-bottom:12px;
+}
+.nav-btn{
+    width:100%;
+    border:none;
+    background:white;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:8px;
+    text-align:left;
+    cursor:pointer;
+    font-size:14px;
+    box-shadow:0 4px 12px rgba(0,0,0,.04);
+}
+.nav-btn:hover{background:#f3f5ff}
+.main{
+    flex:1;
+    padding:20px;
+    overflow:auto;
+}
+.topHeader{
+    background:white;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:18px;
+    box-shadow:0 10px 20px rgba(0,0,0,.05);
+    text-align:center;
+}
+.sectionHeader{
+    background:white;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:14px;
+    box-shadow:0 8px 16px rgba(0,0,0,.05);
+    font-size:20px;
+    font-weight:600;
+    color:#6a6cff;
+    text-align:center;
+}
+.aboutBox{
+    background:white;
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:18px;
+    box-shadow:0 8px 16px rgba(0,0,0,.05);
+    font-size:13px;
+    color:#555;
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:18px;
+    margin-bottom:30px;
+}
+.card{
+    background:white;
+    border-radius:18px;
+    padding:10px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+    display:flex;
+    flex-direction:column;
+    transition:.25s;
+}
+.card:hover{transform:translateY(-6px)}
+.card img{
+    height:140px;
+    object-fit:contain;
+}
+.title{font-size:14px;margin:8px 0 4px;word-break:break-word}
+.price{font-weight:600;color:#6a6cff;margin-bottom:6px}
+.qtyBox{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+.qtyBox button{
+    border:none;
+    background:#6a6cff;
+    color:white;
+    border-radius:8px;
+    padding:4px 10px;
+    cursor:pointer;
+}
+.page{display:none}
+.page.active{display:block}
+.cartItem{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    background:white;
+    padding:10px;
+    border-radius:14px;
+    margin-bottom:10px;
+    box-shadow:0 6px 14px rgba(0,0,0,.05);
+}
+.cartItem img{width:55px;height:55px;object-fit:contain}
+.checkoutBox{
+    max-width:520px;
+    background:white;
+    padding:14px;
+    border-radius:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,.06);
+}
+#signinOverlay{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+}
+#signinOverlay::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.25)),
+        url("https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=60");
+    background-size:cover;
+    background-position:center;
+    filter:blur(8px);
+}
+.signinBox{
+    position:relative;
+    background:white;
+    padding:26px;
+    border-radius:18px;
+    width:320px;
+    text-align:center;
+    box-shadow:0 12px 30px rgba(0,0,0,.2);
+}
+.signinBox h2{
+    margin:0;
+    font-family:'Pacifico',cursive;
+    color:#6a6cff;
+}
+.signinBox p{
+    margin:4px 0 14px;
+    font-size:13px;
+    color:#777;
+}
+.signinBox input{
+    width:100%;
+    padding:9px;
+    margin-bottom:8px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+.signinBox button{
+    width:100%;
+    padding:9px;
+    border:none;
+    background:#6a6cff;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="bgPattern"></div>
+
+<div class="sidebar">
+    <div class="brand">
+        <h2>PR Art & Crafts</h2>
+        <p>Crafting joy, one charm at a time✨</p>
+    </div>
+
+    <div class="userName" id="userName">Guest</div>
+
+    <input class="search" id="searchInput" placeholder="🔍 Search Items">
+
+    <button class="nav-btn" onclick="showPage('home')">🏠 Home</button>
+    <button class="nav-btn" onclick="showPage('clay')">🧸 Clay Charms</button>
+    <button class="nav-btn" onclick="showPage('flowers')">🌸 Flower Crochets</button>
+    <button class="nav-btn" onclick="showPage('cart')">🛒 Cart</button>
+    <button class="nav-btn" onclick="showPage('checkout')">💳 Checkout</button>
+    <button class="nav-btn" onclick="showPage('contact')">📞 Contact</button>
+    <button class="nav-btn" onclick="openSignin()">🔐 Sign In</button>
+</div>
+
+<div class="main">
+
+<div class="topHeader">
+    <h2>Handmade Collections</h2>
+    <p>Unique designs made for creative hearts</p>
+</div>
+
+<div id="home" class="page active">
+    <div class="aboutBox">
+        <b>About Us</b><br><br>
+        PR Art & Crafts creates cute and colourful handmade clay charms and flower crochets designed
+        for craft lovers, gifting and creative projects.
+        Every piece is made with love and creativity to bring joy to your art.
+    </div>
+    <div class="grid" id="homeGrid"></div>
+</div>
+
+<div id="clay" class="page">
+    <div class="sectionHeader">🧸 Clay Charms</div>
+    <div class="grid" id="clayGrid"></div>
+</div>
+
+<div id="flowers" class="page">
+    <div class="sectionHeader">🌸 Flower Crochets</div>
+    <div class="grid" id="flowerGrid"></div>
+</div>
+
+<div id="cart" class="page">
+    <h2>Your Cart</h2>
+    <div id="cartList"></div>
+</div>
+
+<div id="checkout" class="page">
+    <h2>Checkout</h2>
+    <div class="checkoutBox" id="checkoutBox"></div>
+</div>
+
+<div id="contact" class="page">
+    <h2>Contact Us</h2>
+    <p>Email : prartandcrafts@gmail.com</p>
+</div>
+
+</div>
+
+<div id="signinOverlay">
+    <div class="signinBox">
+        <h2>PR Art & Crafts</h2>
+        <p>Crafting joy, one charm at a time✨</p>
+        <input id="loginName" placeholder="Your name">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button onclick="doLogin()">Sign In</button>
+        <button onclick="closeSignin()" style="margin-top:8px;background:#eee;color:#333">← Back</button>
+    </div>
+</div>
+
+<script>
+const products=[
+
+{id:1,name:"Clay Charm – Flower Set",price:120},
+{id:2,name:"Clay Charm – Star Pack",price:150},
+{id:3,name:"Clay Charm – Heart Mix",price:140},
+{id:4,name:"Clay Charm – Animal Pack",price:180},
+{id:5,name:"Clay Charm – Cute Faces",price:160},
+{id:6,name:"Clay Charm – Mini Fruits",price:130},
+{id:7,name:"Clay Charm – Letters",price:110},
+{id:8,name:"Clay Charm – Rainbow Set",price:170},
+{id:9,name:"Clay Charm – Doll Pack",price:190},
+{id:10,name:"Clay Charm – Cartoon Mix",price:155},
+{id:11,name:"Clay Charm – Emoji Set",price:145},
+{id:12,name:"Clay Charm – Nature Pack",price:165},
+{id:13,name:"Clay Charm – Butterfly Set",price:135},
+{id:14,name:"Clay Charm – Unicorn Pack",price:175},
+{id:15,name:"Clay Charm – Candy Mix",price:125},
+{id:16,name:"Clay Charm – Bear Family",price:185},
+{id:17,name:"Clay Charm – Foodie Set",price:140},
+{id:18,name:"Clay Charm – Zodiac Signs",price:160},
+{id:19,name:"Clay Charm – Holiday Pack",price:195},
+{id:20,name:"Clay Charm – Kawaii Mix",price:155},
+{id:21,name:"Clay Charm – Gemstone Set",price:145},
+{id:22,name:"Clay Charm – Travel Pack",price:165},
+{id:23,name:"Clay Charm – Music Notes",price:130},
+{id:24,name:"Clay Charm – Sports Mix",price:150},
+{id:25,name:"Clay Charm – Vintage Set",price:170},
+{id:26,name:"Clay Charm – Party Pack",price:180},
+{id:27,name:"Clay Charm – Baby Set",price:135},
+{id:28,name:"Clay Charm – Wedding Mix",price:200},
+{id:29,name:"Clay Charm – Seasonal Pack",price:160},
+{id:30,name:"Clay Charm – Custom Order",price:250}
+
+];
+
+const flowerProducts = [
+
+{id:101,name:"Flower Crochet – Rose",price:220},
+{id:102,name:"Flower Crochet – Daisy",price:180},
+{id:103,name:"Flower Crochet – Sunflower",price:210},
+{id:104,name:"Flower Crochet – Tulip",price:190},
+{id:105,name:"Flower Crochet – Hibiscus",price:200},
+{id:106,name:"Flower Crochet – Carnation",price:195},
+{id:107,name:"Flower Crochet – Lily",price:215},
+{id:108,name:"Flower Crochet – Mixed Bouquet",price:260},
+{id:109,name:"Flower Crochet – Orchid",price:230},
+{id:110,name:"Flower Crochet – Peony",price:240},
+{id:111,name:"Flower Crochet – Lavender",price:185},
+{id:112,name:"Flower Crochet – Cherry Blossom",price:225},
+{id:113,name:"Flower Crochet – Magnolia",price:235},
+{id:114,name:"Flower Crochet – Jasmine",price:195},
+{id:115,name:"Flower Crochet – Hydrangea",price:255},
+{id:116,name:"Flower Crochet – Forget Me Not",price:175},
+{id:117,name:"Flower Crochet – Poppy",price:205},
+{id:118,name:"Flower Crochet – Lotus",price:245},
+{id:119,name:"Flower Crochet – Dandelion",price:165},
+{id:120,name:"Flower Crochet – Pansy",price:190},
+{id:121,name:"Flower Crochet – Violet",price:180},
+{id:122,name:"Flower Crochet – Marigold",price:200},
+{id:123,name:"Flower Crochet – Camellia",price:220},
+{id:124,name:"Flower Crochet – Anemone",price:210},
+{id:125,name:"Flower Crochet – Sweet Pea",price:195},
+{id:126,name:"Flower Crochet – Zinnia",price:185},
+{id:127,name:"Flower Crochet – Aster",price:215},
+{id:128,name:"Flower Crochet – Freesia",price:205},
+{id:129,name:"Flower Crochet – Gardenia",price:235},
+{id:130,name:"Flower Crochet – Custom Floral",price:280}
+
+];
+
+const cart={};
+let filteredClay=[...products];
+let filteredFlower=[...flowerProducts];
+
+/* NEW */
+let currentPage = "home";
+
+function showPage(id){
+currentPage = id;
+
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+
+if(id==="cart")renderCart();
+if(id==="checkout")renderCheckout();
+if(id==="home")renderHome();
+if(id==="clay")renderClay();
+if(id==="flowers")renderFlowers();
+}
+
+function renderGrid(gridId, list, imgText){
+const grid=document.getElementById(gridId);
+grid.innerHTML="";
+list.forEach(p=>{
+const qty=cart[p.id]||0;
+const d=document.createElement("div");
+d.className="card";
+d.innerHTML=`
+<img src="https://via.placeholder.com/150?text=${imgText}">
+<div class="title">${p.name}</div>
+<div class="price">₹${p.price}</div>
+<div class="qtyBox">
+<button onclick="dec(${p.id})">-</button>
+<span>${qty}</span>
+<button onclick="inc(${p.id})">+</button>
+</div>`;
+grid.appendChild(d);
+});
+}
+
+function renderHome(){
+const all=[...filteredClay,...filteredFlower];
+const grid=document.getElementById("homeGrid");
+
+if(all.length===0){
+grid.innerHTML=`
+<div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;font-size:15px;">
+No items found. Try searching another product.
+</div>`;
+return;
+}
+renderGrid("homeGrid",all,"Item");
+}
+
+function renderClay(){
+renderGrid("clayGrid",filteredClay,"Charm");
+}
+
+function renderFlowers(){
+renderGrid("flowerGrid",filteredFlower,"Crochet");
+}
+
+function getAnyProduct(id){
+return products.find(p=>p.id==id) || flowerProducts.find(p=>p.id==id);
+}
+
+function inc(id){
+if(!cart[id])cart[id]=0;
+if(cart[id]===5)return;
+cart[id]++;
+updateAll();
+}
+
+function dec(id){
+if(!cart[id])return;
+cart[id]--;
+if(cart[id]<=0)delete cart[id];
+updateAll();
+}
+
+function renderCart(){
+const box=document.getElementById("cartList");
+box.innerHTML="";
+if(Object.keys(cart).length===0){
+box.textContent="Your cart is empty.";
+return;
+}
+Object.keys(cart).forEach(id=>{
+const p=getAnyProduct(id);
+const row=document.createElement("div");
+row.className="cartItem";
+row.innerHTML=`
+<img src="https://via.placeholder.com/60?text=Item">
+<div style="flex:1">
+${p.name}<br>₹${p.price} x ${cart[id]}
+</div>
+<div class="qtyBox">
+<button onclick="dec(${id})">-</button>
+<span>${cart[id]}</span>
+<button onclick="inc(${id})">+</button>
+</div>`;
+box.appendChild(row);
+});
+}
+
+/* checkout + placeOrder code unchanged ... */
+
+document.getElementById("searchInput").addEventListener("input",function(){
+
+const val = this.value.toLowerCase().trim();
+const words = val.split(/\s+/).filter(Boolean);
+
+function match(p){
+const name = p.name.toLowerCase();
+return words.every(w=>name.includes(w));
+}
+
+filteredClay   = products.filter(match);
+filteredFlower = flowerProducts.filter(match);
+
+// -------- ITEM NOT FOUND (for all pages) --------
+if(filteredClay.length === 0 && filteredFlower.length === 0){
+
+    if(currentPage === "home"){
+        document.getElementById("homeGrid").innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;font-size:15px;">
+            ❌ Sorry, we couldn’t find any item with that name.
+        </div>`;
+        return;
+    }
+
+    if(currentPage === "clay"){
+        document.getElementById("clayGrid").innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;font-size:15px;">
+            ❌ Sorry, we couldn’t find a clay charm with that name.
+        </div>`;
+        return;
+    }
+
+    if(currentPage === "flowers"){
+        document.getElementById("flowerGrid").innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;font-size:15px;">
+            ❌ Sorry, we couldn’t find a flower crochet with that name.
+        </div>`;
+        return;
+    }
+}
+
+
+/* -------- ONLY OPPOSITE MESSAGE FOR CLAY & FLOWERS -------- */
+
+if(currentPage === "clay"){
+
+    if(filteredClay.length === 0 && filteredFlower.length > 0){
+        document.getElementById("clayGrid").innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">
+        🌸 This looks like a <b>Flower Crochet</b> item.<br>
+        Please search in the <b>Flower Crochets</b> section.
+        </div>`;
+        return;
+    }
+
+    renderClay();
+    return;
+}
+
+if(currentPage === "flowers"){
+
+    if(filteredFlower.length === 0 && filteredClay.length > 0){
+        document.getElementById("flowerGrid").innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#777;padding:30px;">
+        🧸 This looks like a <b>Clay Charm</b> item.<br>
+        Please search in the <b>Clay Charms</b> section.
+        </div>`;
+        return;
+    }
+
+    renderFlowers();
+    return;
+}
+
+/* -------- HOME (NO OPPOSITE MESSAGE) -------- */
+
+renderHome();
+
+});
+
+function updateAll(){
+renderHome();
+renderClay();
+renderFlowers();
+renderCart();
+renderCheckout();
+}
+
+function openSignin(){
+document.getElementById("signinOverlay").style.display="flex";
+}
+
+function closeSignin(){
+document.getElementById("signinOverlay").style.display="none";
+showPage('home');
+}
+
+function doLogin(){
+const name=document.getElementById("loginName").value.trim();
+if(name){
+document.getElementById("userName").textContent="👋 "+name;
+}
+document.getElementById("signinOverlay").style.display="none";
+}
+               
+renderHome();
+renderClay();
+renderFlowers();
+</script>
+
+</body>
+</html>
