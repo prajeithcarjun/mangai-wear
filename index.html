@@ -8,116 +8,132 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
 }
 
 body{
-    color:#2f1d15;
-
-    /* BASE COLOR */
+    font-family:'Poppins',sans-serif;
     background:#f7ead8;
-
-    /* FLORAL TEXTURE */
-    background-image:url('https://www.transparenttextures.com/patterns/leaf.png');
-    background-size:200px;
+    color:#2f1d15;
 }
 
 /* HEADER */
 header{
-    background:#fff8f0;
-    padding:14px;
+    background:#7a0f14;
+    color:#f7ead8;
+    padding:12px 16px;
     position:sticky;
     top:0;
     z-index:100;
-    border-bottom:1px solid #e2d1bd;
 }
 
-.brand{
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.logo img{
+    width:40px;
+}
+
+.logo span{
+    font-family:'Playfair Display',serif;
+    font-size:18px;
+}
+
+/* MENU */
+.menu{
+    display:flex;
+    gap:12px;
+    font-size:13px;
+}
+
+.menu div{
+    cursor:pointer;
+}
+
+/* HERO */
+.hero{
+    background:linear-gradient(135deg,#8b1e2d,#a8322a);
+    color:#f7ead8;
+    padding:20px;
+}
+
+.hero h1{
     font-family:'Playfair Display',serif;
     font-size:26px;
-    color:#8b1e2d;
-}
-
-.search-box{
-    margin-top:10px;
-}
-
-.search-box input{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    border:1px solid #d8c2ab;
-    font-size:15px;
-    outline:none;
-}
-
-/* HERO (INDIAN STYLE) */
-.hero{
-    margin:16px;
-    border-radius:20px;
-    overflow:hidden;
-
-    background:linear-gradient(135deg,#8b1e2d,#c44536,#8b1e2d);
-    color:white;
-    padding:30px 20px;
-    text-align:center;
-}
-
-.hero h2{
-    font-family:'Playfair Display',serif;
-    font-size:24px;
 }
 
 .hero p{
-    font-size:14px;
-    opacity:.9;
+    font-size:13px;
+    margin-top:6px;
 }
 
-/* TABS */
+.btn{
+    margin-top:12px;
+    display:inline-block;
+    padding:10px 18px;
+    background:#e2c199;
+    color:#7a0f14;
+    border-radius:25px;
+    font-size:13px;
+    font-weight:500;
+}
+
+.hero img{
+    width:100%;
+    border-radius:14px;
+    margin-top:14px;
+}
+
+/* CATEGORY TABS */
 .tabs{
     display:flex;
     gap:10px;
+    padding:14px;
     overflow-x:auto;
-    padding:0 16px;
 }
 
 .tab{
-    padding:10px 18px;
-    border-radius:30px;
-    border:1px solid #ddd;
+    padding:8px 14px;
+    border-radius:20px;
     background:white;
-    cursor:pointer;
+    border:1px solid #ddd;
+    font-size:13px;
     white-space:nowrap;
-    font-size:14px;
 }
 
 .tab.active{
     background:#8b1e2d;
     color:white;
-    border:none;
 }
 
 /* PRODUCTS */
 .products{
-    padding:16px;
+    padding:14px;
 }
 
 .card{
     background:white;
-    border-radius:16px;
-    margin-bottom:16px;
+    border-radius:14px;
     overflow:hidden;
-    box-shadow:0 6px 14px rgba(0,0,0,.05);
+    margin-bottom:14px;
+    box-shadow:0 4px 10px rgba(0,0,0,.05);
 }
 
 .card img{
     width:100%;
-    height:auto;
-    display:block;
 }
 
 .card-content{
@@ -125,12 +141,11 @@ header{
 }
 
 .name{
-    font-size:15px;
-    font-weight:500;
+    font-size:14px;
 }
 
 .old{
-    font-size:13px;
+    font-size:12px;
     text-decoration:line-through;
     color:#888;
 }
@@ -139,57 +154,72 @@ header{
     color:#8b1e2d;
     font-weight:600;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-    <div class="brand">Mangai Wear</div>
+    <div class="nav">
+        <div class="logo">
+            <img src="logo.png">
+            <span>Mangai Wear</span>
+        </div>
 
-    <div class="search-box">
-        <input id="searchInput" placeholder="Search kurtis...">
+        <div class="menu">
+            <div onclick="goTop()">Home</div>
+            <div onclick="scrollProducts()">Shop</div>
+        </div>
     </div>
 </header>
 
 <div class="hero">
-    <h2>Elegant Kurti Collection</h2>
-    <p>Inspired by Indian Heritage ✨</p>
+    <h1>Mangai Wear</h1>
+    <p>Grace in every thread ✨</p>
+    <div class="btn" onclick="scrollProducts()">Shop Now</div>
+
+
 </div>
 
+<!-- CATEGORY TABS -->
 <div class="tabs">
-    <div class="tab active" onclick="showCategory(event,'new')">New Arrivals</div>
-    <div class="tab" onclick="showCategory(event,'sale')">Sale</div>
-    <div class="tab" onclick="showCategory(event,'all')">All Kurtis</div>
+    <div class="tab active" onclick="show(event,'top')">Kurti Top</div>
+    <div class="tab" onclick="show(event,'3pcs')">3pcs</div>
+    <div class="tab" onclick="show(event,'cord')">Cord Set</div>
+    <div class="tab" onclick="show(event,'umbrella')">Umbrella</div>
+    <div class="tab" onclick="show(event,'party')">Party Wear</div>
 </div>
 
-<div class="products" id="productGrid"></div>
+<!-- PRODUCTS -->
+<div class="products" id="grid"></div>
 
 <script>
 
-/* PRODUCTS */
 const products = [
-{name:"Floral Cotton Kurti",old:"₹1899",price:"₹1299",category:"new",img:"images/kurti1.jpg"},
-{name:"Elegant Party Kurti",old:"₹2199",price:"₹1599",category:"sale",img:"images/kurti2.jpg"},
-{name:"Printed Daily Kurti",old:"₹1799",price:"₹1199",category:"new",img:"images/kurti3.jpg"},
-{name:"Festive Wear Kurti",old:"₹2499",price:"₹1899",category:"sale",img:"images/kurti4.jpg"},
-{name:"Classic Straight Kurti",old:"₹2099",price:"₹1499",category:"new",img:"images/kurti5.jpg"},
-{name:"Summer Rayon Kurti",old:"₹1699",price:"₹1199",category:"new",img:"images/kurti6.jpg"},
-{name:"Designer Kurti Set",old:"₹2999",price:"₹2299",category:"sale",img:"images/kurti7.jpg"},
-{name:"Casual Office Kurti",old:"₹1899",price:"₹1399",category:"new",img:"images/kurti8.jpg"}
+
+{ name:"Floral Kurti Top", old:"₹1899", price:"₹1299", category:"top", img:"https://via.placeholder.com/400x500" },
+{ name:"Casual Daily Kurti", old:"₹1599", price:"₹1099", category:"top", img:"https://via.placeholder.com/400x500" },
+
+{ name:"Elegant 3pcs Set", old:"₹2499", price:"₹1899", category:"3pcs", img:"https://via.placeholder.com/400x500" },
+{ name:"Festive 3pcs Kurti", old:"₹2699", price:"₹1999", category:"3pcs", img:"https://via.placeholder.com/400x500" },
+
+{ name:"Modern Cord Set", old:"₹2299", price:"₹1699", category:"cord", img:"https://via.placeholder.com/400x500" },
+{ name:"Trendy Cord Outfit", old:"₹2199", price:"₹1599", category:"cord", img:"https://via.placeholder.com/400x500" },
+
+{ name:"Umbrella Style Kurti", old:"₹1999", price:"₹1499", category:"umbrella", img:"https://via.placeholder.com/400x500" },
+{ name:"Designer Umbrella Kurti", old:"₹2199", price:"₹1699", category:"umbrella", img:"https://via.placeholder.com/400x500" },
+
+{ name:"Party Wear Designer", old:"₹2999", price:"₹2299", category:"party", img:"https://via.placeholder.com/400x500" },
+{ name:"Luxury Party Kurti", old:"₹3299", price:"₹2599", category:"party", img:"https://via.placeholder.com/400x500" }
+
 ];
 
-let filtered = products.filter(p => p.category === "new");
+let filtered = products.filter(p => p.category === "top");
 
-/* RENDER */
 function render(){
-    const grid = document.getElementById("productGrid");
+    const grid = document.getElementById("grid");
     grid.innerHTML = "";
-
-    if(filtered.length === 0){
-        grid.innerHTML = "<p>No products found</p>";
-        return;
-    }
 
     filtered.forEach(p=>{
         grid.innerHTML += `
@@ -200,55 +230,25 @@ function render(){
                 <div class="old">${p.old}</div>
                 <div class="price">${p.price}</div>
             </div>
-        </div>
-        `;
+        </div>`;
     });
 }
 
-/* CATEGORY */
-function showCategory(e,type){
-
+function show(e,type){
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
     e.target.classList.add("active");
 
-    if(type==="new"){
-        filtered = products.filter(p=>p.category==="new");
-    }
-    else if(type==="sale"){
-        filtered = products.filter(p=>p.category==="sale");
-    }
-    else{
-        filtered = products;
-    }
-
+    filtered = products.filter(p => p.category === type);
     render();
 }
 
-/* SEARCH */
-const search = document.getElementById("searchInput");
-
-search.addEventListener("focus", ()=>{
+function goTop(){
     window.scrollTo(0,0);
-});
+}
 
-search.addEventListener("input", function(){
-
-    let val = this.value.toLowerCase().trim();
-
-    if(val===""){
-        filtered = products.filter(p=>p.category==="new");
-    }
-    else if(val.includes("sale")){
-        filtered = products.filter(p=>p.category==="sale");
-    }
-    else{
-        filtered = products.filter(p =>
-            p.name.toLowerCase().includes(val)
-        );
-    }
-
-    render();
-});
+function scrollProducts(){
+    window.scrollTo(0,500);
+}
 
 render();
 
